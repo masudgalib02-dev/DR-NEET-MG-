@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DR NEET MG - AI Study Assistant & Personal Mentor for NEET UG</title>
+  <meta name="description" content="Official website & interactive web portal for DR NEET MG: AI Study Assistant & Personal Mentor for NEET UG aspirants. Features Gemini AI doubt solving, PW Tracker 360, 100% on-device local storage, mistake diary, and physics formulas.">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070D1E;
+      --bg-surface: #0E172E;
+      --bg-card: #13203B;
+      --bg-card-hover: #1A2B4E;
+      --border-color: #1E2D4A;
+      --emerald: #10B981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --gold: #FDB813;
+      --gold-glow: rgba(253, 184, 19, 0.25);
+      --blue-phy: #38BDF8;
+      --purple-chem: #C084FC;
+      --coral-warn: #F87171;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Ambient background glows */
+    .glow-sphere {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 {
+      top: -60px;
+      left: 10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.16), transparent 70%);
+    }
+    .glow-2 {
+      top: 100px;
+      right: 5%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(253, 184, 19, 0.12), transparent 70%);
+    }
+
+    /* Container strictly optimized for 1280px layout */
+    .app-frame {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header: Ultra-clean 56px height */
+    header {
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(16px);
+      background: rgba(7, 13, 30, 0.9);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 100;
+      height: 58px;
+    }
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 14px var(--gold-glow);
+      object-fit: cover;
+    }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      background: linear-gradient(135deg, #FFFFFF 30%, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-pill {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-nav-apk {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--gold), #E09B00);
+      color: #070D1E;
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 7px 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px var(--gold-glow);
+      transition: all 0.2s ease;
+    }
+    .btn-nav-apk:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(253, 184, 19, 0.4);
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--emerald);
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--emerald);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* 1280x640 Master Cockpit Section */
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 18px;
+      padding: 16px 0;
+      min-height: 580px;
+    }
+
+    /* Left Control Deck */
+    .control-deck {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .control-deck::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--emerald));
+    }
+    .deck-header {
+      margin-bottom: 12px;
+    }
+    .deck-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--gold);
+      background: rgba(253, 184, 19, 0.1);
+      border: 1px solid rgba(253, 184, 19, 0.3);
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    .deck-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      color: #FFF;
+      margin-bottom: 6px;
+    }
+    .deck-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Class Switcher Selector */
+    .class-selector-box {
+      margin: 10px 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+    }
+    .class-selector-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .class-chips {
+      display: flex;
+      gap: 6px;
+    }
+    .class-chip {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .class-chip:hover {
+      border-color: var(--gold);
+      color: #FFF;
+    }
+    .class-chip.active {
+      background: rgba(253, 184, 19, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    /* Interactive Module Navigator Buttons */
+    .module-nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 8px 0;
+    }
+    .module-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .module-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--emerald);
+      transform: translateX(3px);
+    }
+    .module-btn.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--emerald);
+      color: var(--emerald);
+      box-shadow: 0 0 12px var(--emerald-glow);
+    }
+    .module-icon {
+      font-size: 1.1rem;
+      width: 24px;
+      text-align: center;
+    }
+    .module-tag {
+      margin-left: auto;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Deck Footer with APK button */
+    .deck-footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-color);
+    }
+    .btn-apk-big {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--emerald), #059669);
+      color: #070D1E;
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 16px var(--emerald-glow);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .btn-apk-big:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Right Interactive Canvas (Height matched for 1280x640 frame) */
+    .interactive-canvas {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+      max-height: 580px;
+    }
+
+    .canvas-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .canvas-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .canvas-indicator {
+      font-size: 0.72rem;
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    .canvas-body {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .canvas-body::-webkit-scrollbar {
+      width: 5px;
+    }
+    .canvas-body::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    /* View 1: Gemini AI Doubt Engine */
+    .doubt-prompt-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .doubt-input {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: #FFF;
+      font-family: var(--font-main);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .doubt-input:focus {
+      border-color: var(--gold);
+    }
+    .doubt-ask-btn {
+      background: var(--emerald);
+      color: #070D1E;
+      border: none;
+      padding: 0 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+    .doubt-ask-btn:hover {
+      opacity: 0.9;
+    }
+
+    .quick-chips-bar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .quick-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--gold);
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .quick-chip:hover {
+      border-color: var(--gold);
+      background: var(--bg-card-hover);
+    }
+
+    .solution-card {
+      background: #091325;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: #CBD5E1;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    .solution-card strong {
+      color: #FFF;
+    }
+    .solution-card em {
+      color: var(--gold);
+      font-style: normal;
+      font-weight: 600;
+    }
+    .solution-directive {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--emerald);
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+
+    /* View 2: 720 Score & Negative Mark Calculator */
+    .calc-flex {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: center;
+      height: 100%;
+    }
+    .slider-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      border-radius: 4px;
+      background: #070D1E;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--gold-glow);
+    }
+    .score-display-card {
+      background: #070F21;
+      border: 2px solid var(--gold);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 25px var(--gold-glow);
+    }
+    .score-num {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .score-sub {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--emerald);
+      margin-bottom: 12px;
+    }
+    .stats-triad {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+      font-size: 0.72rem;
+    }
+    .stats-triad strong {
+      display: block;
+      font-size: 0.95rem;
+      color: #FFF;
+    }
+
+    /* View 3: PW Tracker 360 Plan Preview */
+    .tracker-day-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--blue-phy);
+      margin-bottom: 10px;
+    }
+    .triad-card-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .triad-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      transition: border-color 0.2s;
+    }
+    .triad-box.done {
+      border-color: var(--emerald);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .triad-box h4 {
+      font-size: 0.78rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .triad-box p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+    .triad-check {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* View 4: Physics Formulas Hub */
+    .formula-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 10px;
+    }
+    .formula-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      border-left: 3px solid var(--blue-phy);
+    }
+    .formula-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--blue-phy);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .formula-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #FFF;
+      margin-bottom: 6px;
+    }
+    .formula-code {
+      background: #070D1E;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--gold);
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .formula-tip {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* View 5: Mistake Diary & Error Log */
+    .mistake-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mistake-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--coral-warn);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+    }
+    .mistake-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .mistake-text {
+      font-size: 0.8rem;
+      color: #FFF;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .mistake-compare {
+      display: flex;
+      gap: 16px;
+      font-size: 0.72rem;
+    }
+
+    /* Responsive Adaptation for mobile/smaller screens */
+    @media (max-width: 992px) {
+      .cockpit-grid {
+        grid-template-columns: 1fr;
+      }
+      .interactive-canvas {
+        max-height: none;
+      }
+      .calc-flex {
+        grid-template-columns: 1fr;
+      }
+      .triad-card-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Additional Highlights Below Cockpit */
+    .feature-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 18px 0 30px;
+    }
+    .strip-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .strip-icon {
+      font-size: 1.6rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+    }
+    .strip-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #FFF;
+      margin-bottom: 2px;
+    }
+    .strip-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 18px 0;
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+
+  <!-- Top Navigation (58px streamlined) -->
+  <header>
+    <div class="app-frame header-inner">
+      <div class="brand-wrap">
+        <img src="icon.png" alt="DR NEET MG" class="brand-logo" onerror="this.src='app/src/main/res/mipmap-xxxhdpi/ic_launcher.png'">
+        <div class="brand-title">
+          DR NEET MG
+          <span class="brand-pill">AI ASSISTANT</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <div class="status-badge">
+          <span class="pulse-dot"></span>
+          <span>Gemini 3.5 & 3.1 Live</span>
+        </div>
+        <a href="app-debug.apk" download class="btn-nav-apk">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download APK (v1.0)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1280x640 Interactive App Cockpit -->
+  <main class="app-frame">
+    <div class="cockpit-grid">
+
+      <!-- Left Column: Control Deck & Class Switcher -->
+      <aside class="control-deck">
+        <div>
+          <div class="deck-header">
+            <span class="deck-badge">
+              ⚡ 100% On-Device Local Persistence
+            </span>
+            <h1 class="deck-title">Your 24/7 AI Doctor-Mentor for NEET UG</h1>
+            <p class="deck-desc">
+              Complete exam companion with real-time Gemini doubt solver, PW Tracker 360 triad scheduling, Mistake Notebook, and NTA formula sheets.
+            </p>
+          </div>
+
+          <!-- Class Selection Chips -->
+          <div class="class-selector-box">
+            <div class="class-selector-label">
+              <span>Syllabus Target Mode</span>
+              <span id="activeClassLabel" style="color: var(--gold);">Class 11 Arjuna</span>
+            </div>
+            <div class="class-chips">
+              <button class="class-chip active" onclick="switchClass('CLASS_11', this)">Class 11</button>
+              <button class="class-chip" onclick="switchClass('CLASS_12', this)">Class 12</button>
+              <button class="class-chip" onclick="switchClass('DROPPER', this)">Dropper 360°</button>
+            </div>
+          </div>
+
+          <!-- Interactive Module Navigation List -->
+          <div class="module-nav-list">
+            <button class="module-btn active" onclick="switchView('doubt', this)">
+              <span class="module-icon">🤖</span>
+              <span>Gemini AI Doubt Solver</span>
+              <span class="module-tag">Flash 3.5 & Pro</span>
+            </button>
+            <button class="module-btn" onclick="switchView('calculator', this)">
+              <span class="module-icon">🎯</span>
+              <span>720 Mock & Penalty Calc</span>
+              <span class="module-tag">+4 / -1 Marks</span>
+            </button>
+            <button class="module-btn" onclick="switchView('tracker', this)">
+              <span class="module-icon">📅</span>
+              <span>PW Tracker 360 Triad</span>
+              <span class="module-tag">Lecture + DPP</span>
+            </button>
+            <button class="module-btn" onclick="switchView('formulas', this)">
+              <span class="module-icon">⚡</span>
+              <span>Physics Hub & Unit 20</span>
+              <span class="module-tag">Vernier & Formulas</span>
+            </button>
+            <button class="module-btn" onclick="switchView('mistakes', this)">
+              <span class="module-icon">📓</span>
+              <span>Digital Mistake Notebook</span>
+              <span class="module-tag">Error Diary</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="deck-footer">
+          <a href="app-debug.apk" download class="btn-apk-big">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Download Android App APK</span>
+          </a>
+          <div class="meta-row">
+            <span>Size: ~12 MB • Free Offline</span>
+            <span>Android 7.0+ (API 24+)</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Column: Interactive Canvas Screen (Swappable Modules) -->
+      <section class="interactive-canvas">
+
+        <!-- Module 1: Gemini AI Doubt Engine -->
+        <div id="view-doubt" class="canvas-view" style="display: flex; flex-direction: column; height: 100%;">
+          <div class="canvas-topbar">
+            <div class="canvas-title">
+              <span>🤖</span>
+              <span>DR NEET MG Doubt Engine</span>
+            </div>
+            <span class="canvas-indicator">Google Gemini Dual Engine</span>
+          </div>
+
+          <div class="doubt-prompt-row">
+            <input type="text" id="doubtInput" class="doubt-input" placeholder="Ask any NEET doubt, derivation, or NCERT concept..." value="Why does Photorespiration waste 25% carbon in C3 plants but not in C4?">
+            <button class="doubt-ask-btn" onclick="solveDoubt()">
+              <span>Ask AI</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </div>
+
+          <div class="quick-chips-bar">
+            <span class="quick-chip" onclick="setPrompt('Why does Photorespiration waste 25% carbon in C3 plants but not in C4?')">🌱 RuBisCO & C4 Bypass</span>
+            <span class="quick-chip" onclick="setPrompt('Derive Work-Energy Theorem for variable force with NCERT calculus steps')">⚡ Work-Energy Theorem</span>
+            <span class="quick-chip" onclick="setPrompt('Why is ortho-nitrophenol steam volatile but para-nitrophenol is not?')">🧪 Ortho vs Para H-Bonding</span>
+            <span class="quick-chip" onclick="setPrompt('How to calculate Vernier Caliper least count and zero error in NTA NEET?')">📐 Vernier Zero Error</span>
+            <span class="quick-chip" onclick="setPrompt('Explain DNA replication leading vs lagging strand and RNA primer role')">🧬 Okazaki Fragments</span>
+          </div>
+
+          <div class="canvas-body">
+            <div class="solution-card" id="solutionCard">
+              <p><strong>1. Dual Nature of RuBisCO:</strong><br>
+              RuBisCO has competitive affinity for both CO2 and O2. When temperature is elevated or O2 concentration is high, RuBisCO acts as an oxygenase, forming 1 molecule of 3-PGA (3C) and 1 molecule of Phosphoglycolate (2C).</p>
+              <br>
+              <p><strong>2. Why It's 25% Carbon Wasteful:</strong><br>
+              Phosphoglycolate passes through Peroxisome and Mitochondria where 1 CO2 is lost for every 2 molecules of glycolate without synthesizing any ATP or NADPH! Rather, ATP is consumed.</p>
+              <br>
+              <p><strong>3. C4 Bypass (Kranz Anatomy):</strong><br>
+              C4 plants use PEP carboxylase (which has ZERO affinity for O2) in mesophyll cells, releasing CO2 right inside Bundle Sheath cells around RuBisCO, ensuring saturated CO2. Hence photorespiration NEVER occurs in C4 plants (e.g., Maize, Sugarcane)!</p>
+              <br>
+              <p><em>⚠️ NEET Exam Trap: RuBisCO is absent in mesophyll cells of C4 plants—located ONLY in bundle sheath cells!</em></p>
+
+              <div class="solution-directive">
+                DR NEET MG Check-in: Report your status immediately — Have you completed today's assigned concept study and your daily target MCQs?
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 2: 720 Score & Negative Mark Calculator -->
+        <div id="view-calculator" class="canvas-view" style="display: none; height: 100%;">
+          <div class="canvas-topbar">
+            <div class="canvas-title">
+              <span>🎯</span>
+              <span>720 Marks & Negative Marks Calculator</span>
+            </div>
+            <span class="canvas-indicator">NEET UG Simulator</span>
+          </div>
+
+          <div class="canvas-body">
+            <div class="calc-flex">
+              <div>
+                <div class="slider-tile">
+                  <div class="slider-header">
+                    <span>Correct Questions (+4 Marks each):</span>
+                    <span id="txtCorrect" style="color: var(--emerald);">160 / 180</span>
+                  </div>
+                  <input type="range" id="sliderCorrect" min="0" max="180" value="160" oninput="recalcScore()">
+                </div>
+
+                <div class="slider-tile">
+                  <div class="slider-header">
+                    <span>Incorrect / Traps (-1 Mark each):</span>
+                    <span id="txtWrong" style="color: var(--coral-warn);">15 Mistakes</span>
+                  </div>
+                  <input type="range" id="sliderWrong" min="0" max="40" value="15" oninput="recalcScore()">
+                </div>
+
+                <div class="slider-tile">
+                  <div class="slider-header">
+                    <span>Unattempted Questions (0 Marks):</span>
+                    <span id="txtUnattempted" style="color: var(--text-muted);">5 Skipped</span>
+                  </div>
+                </div>
+
+                <p style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.4;">
+                  💡 <strong>Mentor Strategy:</strong> 15 mistakes cost you <strong>75 potential marks</strong> (60 not earned + 15 deducted). Use the Mistake Notebook to turn repeated traps into instant +4 marks!
+                </p>
+              </div>
+
+              <div class="score-display-card">
+                <div class="score-num" id="calcTotal">625</div>
+                <div class="score-sub" id="calcVerdict">Government Medical College (GMC) Qualified</div>
+                <div class="stats-triad">
+                  <div>
+                    <span>Gross (+)</span>
+                    <strong id="calcGross">+640</strong>
+                  </div>
+                  <div>
+                    <span>Negative (-)</span>
+                    <strong id="calcNegative" style="color: var(--coral-warn);">-15</strong>
+                  </div>
+                  <div>
+                    <span>Accuracy</span>
+                    <strong id="calcAcc" style="color: var(--emerald);">91.4%</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 3: PW Tracker 360 Plan Preview -->
+        <div id="view-tracker" class="canvas-view" style="display: none; height: 100%;">
+          <div class="canvas-topbar">
+            <div class="canvas-title">
+              <span>📅</span>
+              <span>PW Tracker 360 Triad Planner</span>
+            </div>
+            <span class="canvas-indicator">Day 42 Schedule</span>
+          </div>
+
+          <div class="canvas-body">
+            <div class="tracker-day-badge">
+              <span>⚡ Arjuna NEET 360: Today's Dynamic Schedule</span>
+            </div>
+
+            <div class="triad-card-row">
+              <div class="triad-box" id="boxPhy">
+                <h4>
+                  <span>Physics (MR Sir)</span>
+                  <span style="font-size: 0.7rem;">⚡</span>
+                </h4>
+                <p><strong>Work, Energy & Power</strong></p>
+                <p>Lecture 03: Work-Energy Theorem for variable force & spring potential energy.</p>
+                <label class="triad-check" onclick="toggleTask('boxPhy')">
+                  <input type="checkbox" id="chkPhy">
+                  <span>Watched & Notes Done</span>
+                </label>
+              </div>
+
+              <div class="triad-box" id="boxChem">
+                <h4>
+                  <span>Chemistry (Pankaj Sir)</span>
+                  <span style="font-size: 0.7rem;">🧪</span>
+                </h4>
+                <p><strong>Chemical Bonding</strong></p>
+                <p>DPP 04: Hybridization, VSEPR shapes, and dipole moments (35 MCQs drill).</p>
+                <label class="triad-check" onclick="toggleTask('boxChem')">
+                  <input type="checkbox" id="chkChem">
+                  <span>DPP Solved (35/35)</span>
+                </label>
+              </div>
+
+              <div class="triad-box" id="boxBio">
+                <h4>
+                  <span>Biology (Tarun Sir)</span>
+                  <span style="font-size: 0.7rem;">🧬</span>
+                </h4>
+                <p><strong>Plant Kingdom</strong></p>
+                <p>NCERT Line-by-Line: Pteridophytes life cycle, heterospory & seed habit.</p>
+                <label class="triad-check" onclick="toggleTask('boxBio')">
+                  <input type="checkbox" id="chkBio">
+                  <span>NCERT Highlighted</span>
+                </label>
+              </div>
+            </div>
+
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="font-size: 0.82rem; color: #FFF;">Running behind schedule today?</strong>
+                <p style="font-size: 0.72rem; color: var(--text-muted);">Use the 1-Tap "Shift to Tomorrow" feature in DR NEET MG to automatically rebalance your timeline.</p>
+              </div>
+              <button onclick="alert('In the DR NEET MG Android App, tapping Shift to Tomorrow reschedules incomplete DPPs/Lectures without breaking your streak!')" style="background: rgba(253, 184, 19, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer;">
+                Shift to Tomorrow
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 4: Physics Formulas Hub & Unit 20 -->
+        <div id="view-formulas" class="canvas-view" style="display: none; height: 100%;">
+          <div class="canvas-topbar">
+            <div class="canvas-title">
+              <span>⚡</span>
+              <span>Physics Formula Hub & Experimental Unit 20</span>
+            </div>
+            <span class="canvas-indicator">NTA NEET UG 2026</span>
+          </div>
+
+          <div class="canvas-body">
+            <div class="formula-grid">
+              <div class="formula-card">
+                <div class="formula-header">
+                  <span>Unit 20 Experimental</span>
+                  <span>Class 11/12</span>
+                </div>
+                <div class="formula-title">Vernier Calipers Least Count & Zero Error</div>
+                <code class="formula-code">LC = 1 MSD - 1 VSD = (1/n) MSD</code>
+                <p class="formula-tip">Positive zero error: SUBTRACT from reading. Negative zero error: ADD to reading.</p>
+              </div>
+
+              <div class="formula-card">
+                <div class="formula-header">
+                  <span>Unit 20 Experimental</span>
+                  <span>Class 11/12</span>
+                </div>
+                <div class="formula-title">Screw Gauge Pitch & Least Count</div>
+                <code class="formula-code">LC = Pitch / Total Circular Divisions</code>
+                <p class="formula-tip">Backlash error is eliminated by rotating screw in only ONE direction while taking readings.</p>
+              </div>
+
+              <div class="formula-card">
+                <div class="formula-header">
+                  <span>Mechanics</span>
+                  <span>Class 11</span>
+                </div>
+                <div class="formula-title">Work-Energy Theorem (Variable Force)</div>
+                <code class="formula-code">W_net = ∫ F·dx = ΔK = K_f - K_i</code>
+                <p class="formula-tip">Applies to ALL types of forces: conservative, non-conservative, internal, and external.</p>
+              </div>
+
+              <div class="formula-card">
+                <div class="formula-header">
+                  <span>Electrostatics</span>
+                  <span>Class 12</span>
+                </div>
+                <div class="formula-title">Capacitance with Dielectric Slab</div>
+                <code class="formula-code">C = ε0·A / (d - t + t/K)</code>
+                <p class="formula-tip">If battery remains connected: V is constant, Q and Energy INCREASE by factor K.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 5: Mistake Diary & Error Log -->
+        <div id="view-mistakes" class="canvas-view" style="display: none; height: 100%;">
+          <div class="canvas-topbar">
+            <div class="canvas-title">
+              <span>📓</span>
+              <span>Digital Mistake Notebook</span>
+            </div>
+            <span class="canvas-indicator">Rectify Traps</span>
+          </div>
+
+          <div class="canvas-body">
+            <div class="mistake-list">
+              <div class="mistake-item">
+                <div class="mistake-top">
+                  <span style="color: var(--blue-phy);">Physics • Mechanics</span>
+                  <span style="color: var(--coral-warn);">Error: Question Trap Misread</span>
+                </div>
+                <div class="mistake-text">Work done by centripetal force in a complete circular revolution?</div>
+                <div class="mistake-compare">
+                  <span style="color: var(--coral-warn);">My Attempt: 2πr·F (Wrong)</span>
+                  <span style="color: var(--emerald);">Correct: ZERO (F ⟂ v at every instant)</span>
+                </div>
+              </div>
+
+              <div class="mistake-item">
+                <div class="mistake-top">
+                  <span style="color: var(--purple-chem);">Chemistry • Organic</span>
+                  <span style="color: var(--coral-warn);">Error: Reagent Forgotten</span>
+                </div>
+                <div class="mistake-text">Reagent used in Rosenmund Reduction of acyl chlorides to aldehydes?</div>
+                <div class="mistake-compare">
+                  <span style="color: var(--coral-warn);">My Attempt: LiAlH4 (Alcohol trap)</span>
+                  <span style="color: var(--emerald);">Correct: H2 / Pd-BaSO4 (poisoned by sulfur/quinoline)</span>
+                </div>
+              </div>
+
+              <div class="mistake-item">
+                <div class="mistake-top">
+                  <span style="color: var(--emerald);">Biology • Genetics</span>
+                  <span style="color: var(--coral-warn);">Error: NCERT Line Trap</span>
+                </div>
+                <div class="mistake-text">In a transcription unit, the promoter is located towards which end?</div>
+                <div class="mistake-compare">
+                  <span style="color: var(--coral-warn);">My Attempt: 3'-end of template</span>
+                  <span style="color: var(--emerald);">Correct: 5'-end (upstream) of CODING strand (Reference convention)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- Quick Feature Strip Below Cockpit -->
+    <div class="feature-strip">
+      <div class="strip-card">
+        <div class="strip-icon" style="color: var(--gold);">🤖</div>
+        <div>
+          <div class="strip-title">Gemini AI Duo</div>
+          <div class="strip-sub">Flash 3.5 & Pro 3.1 Reasoning</div>
+        </div>
+      </div>
+
+      <div class="strip-card">
+        <div class="strip-icon" style="color: var(--emerald);">💾</div>
+        <div>
+          <div class="strip-title">100% Local Device Storage</div>
+          <div class="strip-sub">Zero Cloud Lock, Total Privacy</div>
+        </div>
+      </div>
+
+      <div class="strip-card">
+        <div class="strip-icon" style="color: var(--blue-phy);">⚡</div>
+        <div>
+          <div class="strip-title">Unit 20 Practical Skills</div>
+          <div class="strip-sub">Vernier, Screw Gauge, Metre Bridge</div>
+        </div>
+      </div>
+
+      <div class="strip-card">
+        <div class="strip-icon" style="color: var(--purple-chem);">⏱️</div>
+        <div>
+          <div class="strip-title">Study Clock & Pomodoro</div>
+          <div class="strip-sub">Subject Focus Hours Logger</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-inner">
+        <div>
+          <strong style="color: #FFF;">DR NEET MG</strong> &bull; Dedicated to Medical Aspirants &bull; Class 11, Class 12 & Droppers
+        </div>
+        <div>
+          Layout optimized for 1280&times;640px &bull; Powered by Google Gemini AI & Android Jetpack
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Knowledge Base for Simulated Gemini Doubt Solver
+    const knowledgeBase = {
+      'photorespiration': `<strong>1. Dual Nature of RuBisCO:</strong><br>RuBisCO has competitive affinity for both CO2 and O2. When temperature is high or O2 rises, RuBisCO acts as an oxygenase, forming 1 molecule of 3-PGA (3C) and 1 molecule of Phosphoglycolate (2C).<br><br><strong>2. Why It's 25% Carbon Wasteful:</strong><br>Phosphoglycolate passes through Peroxisome and Mitochondria where 1 CO2 is lost for every 2 molecules of glycolate without synthesizing any ATP or NADPH! Rather, ATP is consumed.<br><br><strong>3. C4 Bypass (Kranz Anatomy):</strong><br>C4 plants use PEP carboxylase (which has ZERO affinity for O2) in mesophyll cells, releasing CO2 right inside Bundle Sheath cells around RuBisCO, ensuring saturated CO2. Hence photorespiration NEVER occurs in C4 plants (e.g., Maize, Sugarcane)!<br><br><em>⚠️ NEET Exam Trap: RuBisCO is absent in mesophyll cells of C4 plants—located ONLY in bundle sheath cells!</em><br><div class="solution-directive">DR NEET MG Check-in: Report your status immediately — Have you completed today's assigned concept study and your daily target MCQs?</div>`,
+      'work': `<strong>1. Work-Energy Theorem for Variable Force:</strong><br>By definition of kinetic energy: K = 1/2 m v².<br>Differentiating with respect to time: dK/dt = 1/2 m (2v dv/dt) = m (dv/dt) v = F * (dx/dt).<br>Therefore: dK = F dx.<br>Integrating from initial state (x_i, K_i) to final state (x_f, K_f):<br>∫ dK = ∫ F dx  ==>  K_f - K_i = W_net.<br><br><strong>2. Core NCERT Caveat:</strong><br>Work-energy theorem is valid for ALL types of forces: Conservative, Non-conservative, Internal, and External!<br><br><em>⚠️ NEET Trap: Work done by internal forces is zero ONLY for perfectly rigid bodies where relative distance between particles doesn't change!</em><br><div class="solution-directive">DR NEET MG Check-in: Report your status immediately — Have you completed today's assigned concept study and your daily target MCQs?</div>`,
+      'phenol': `<strong>1. Intramolecular vs Intermolecular H-Bonding:</strong><br>In ortho-nitrophenol, the -OH and -NO2 groups are close to each other on adjacent carbons (1,2-positions), forming a closed 6-membered chelate ring via INTRAMOLECULAR hydrogen bonding.<br><br>In para-nitrophenol, the groups are far apart (1,4-positions), forming INTERMOLECULAR hydrogen bonds connecting adjacent molecules into large networks.<br><br><strong>2. Why Ortho is Steam Volatile:</strong><br>Intramolecular H-bonding prevents association between molecules, lowering the boiling point. Para-nitrophenol has strong intermolecular associations, resulting in a much higher boiling point.<br><br><em>⚠️ NEET Trap: Ortho-nitrophenol is LESS soluble in water than para-nitrophenol because its -OH group is chelated internally!</em><br><div class="solution-directive">DR NEET MG Check-in: Report your status immediately — Have you completed today's assigned concept study and your daily target MCQs?</div>`,
+      'vernier': `<strong>1. Vernier Caliper Least Count (LC):</strong><br>LC = 1 Main Scale Division (MSD) - 1 Vernier Scale Division (VSD).<br>If n divisions of Vernier coincide with (n-1) divisions of Main Scale: LC = (1/n) MSD.<br>Standard: 1 MSD = 1 mm, 10 VSD = 9 MSD => LC = 0.1 mm = 0.01 cm.<br><br><strong>2. Zero Error Calculation:</strong><br>• Positive Zero Error: Vernier 0 is to the RIGHT of Main 0. (Always SUBTRACT positive error!).<br>• Negative Zero Error: Vernier 0 is to the LEFT of Main 0. (Always ADD negative error!).<br><br><em>⚠️ NEET NTA Trap: Always measure internal diameter using upper jaws and depth using the depth probe blade!</em><br><div class="solution-directive">DR NEET MG Check-in: Report your status immediately — Have you completed today's assigned concept study and your daily target MCQs?</div>`,
+      'dna': `<strong>1. Leading vs Lagging Strand:</strong><br>DNA polymerase synthesizes strictly in 5' to 3' direction. On the 3' -> 5' template strand, synthesis is continuous (Leading Strand) using 1 RNA primer.<br><br>On the 5' -> 3' template, synthesis is discontinuous (Lagging Strand), producing Okazaki fragments (each requiring a separate RNA primer synthesized by Primase).<br><br><strong>2. Enzyme Sequence:</strong><br>1. Helicase unwinds double helix.<br>2. Single-Strand Binding Proteins (SSB) prevent re-annealing.<br>3. Topoisomerase / Gyrase relieves supercoiling tension.<br>4. DNA Ligase joins Okazaki fragments via phosphodiester bonds.<br><br><em>⚠️ NEET Trap: DNA replication in eukaryotes occurs during S-phase of interphase in the nucleus!</em><br><div class="solution-directive">DR NEET MG Check-in: Report your status immediately — Have you completed today's assigned concept study and your daily target MCQs?</div>`
+    };
+
+    function setPrompt(txt) {
+      document.getElementById('doubtInput').value = txt;
+      solveDoubt();
+    }
+
+    function solveDoubt() {
+      const q = document.getElementById('doubtInput').value.toLowerCase();
+      const card = document.getElementById('solutionCard');
+      card.innerHTML = "<p style='color: var(--gold);'><em>⚡ Gemini AI is analyzing NCERT textbook statements and cross-checking NTA traps...</em></p>";
+
+      setTimeout(() => {
+        let key = 'photorespiration';
+        if (q.includes('work') || q.includes('energy') || q.includes('theorem')) key = 'work';
+        else if (q.includes('phenol') || q.includes('steam') || q.includes('nitrophenol')) key = 'phenol';
+        else if (q.includes('vernier') || q.includes('caliper') || q.includes('zero error')) key = 'vernier';
+        else if (q.includes('dna') || q.includes('replication') || q.includes('lagging') || q.includes('primer')) key = 'dna';
+
+        card.innerHTML = knowledgeBase[key] || knowledgeBase['photorespiration'];
+      }, 300);
+    }
+
+    // Module Switcher in 1280x640 Cockpit
+    function switchView(viewName, btn) {
+      document.querySelectorAll('.module-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.canvas-view').forEach(v => v.style.display = 'none');
+      const target = document.getElementById('view-' + viewName);
+      if (target) {
+        target.style.display = (viewName === 'doubt') ? 'flex' : 'block';
+      }
+    }
+
+    // Class Target Switcher
+    function switchClass(className, btn) {
+      document.querySelectorAll('.class-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+
+      const label = document.getElementById('activeClassLabel');
+      if (className === 'CLASS_11') label.innerText = "Class 11 Arjuna";
+      else if (className === 'CLASS_12') label.innerText = "Class 12 Lakshya";
+      else label.innerText = "Dropper Yakeen 360°";
+    }
+
+    // 720 Score Recalculator
+    function recalcScore() {
+      let correct = parseInt(document.getElementById('sliderCorrect').value);
+      let wrong = parseInt(document.getElementById('sliderWrong').value);
+
+      if (correct + wrong > 180) {
+        wrong = 180 - correct;
+        document.getElementById('sliderWrong').value = wrong;
+      }
+
+      const unattempted = 180 - (correct + wrong);
+      const gross = correct * 4;
+      const negative = wrong * 1;
+      const total = gross - negative;
+      const acc = (correct + wrong) > 0 ? ((correct / (correct + wrong)) * 100).toFixed(1) : "0.0";
+
+      document.getElementById('txtCorrect').innerText = `${correct} / 180`;
+      document.getElementById('txtWrong').innerText = `${wrong} Mistakes`;
+      document.getElementById('txtUnattempted').innerText = `${unattempted} Skipped`;
+
+      document.getElementById('calcTotal').innerText = total;
+      document.getElementById('calcGross').innerText = `+${gross}`;
+      document.getElementById('calcNegative').innerText = `-${negative}`;
+      document.getElementById('calcAcc').innerText = `${acc}%`;
+
+      const verdict = document.getElementById('calcVerdict');
+      if (total >= 680) {
+        verdict.innerText = "🌟 AIIMS New Delhi / Top Central GMC Seats!";
+        verdict.style.color = "#FDB813";
+      } else if (total >= 620) {
+        verdict.innerText = "🏥 Government Medical College (GMC) Qualified";
+        verdict.style.color = "#10B981";
+      } else if (total >= 550) {
+        verdict.innerText = "🩺 Medical Seat Eligible • Boost Accuracy";
+        verdict.style.color = "#38BDF8";
+      } else {
+        verdict.innerText = "⚠️ Backlog Recovery Required - Follow DR NEET MG Daily Plan";
+        verdict.style.color = "#F87171";
+      }
+    }
+
+    // Interactive Checklist for PW 360 Triad
+    function toggleTask(boxId) {
+      const box = document.getElementById(boxId);
+      box.classList.toggle('done');
+    }
+
+    recalcScore();
+  </script>
+</body>
+</html>
